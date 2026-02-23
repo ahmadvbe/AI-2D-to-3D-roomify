@@ -1,6 +1,9 @@
+//53:45 now we hve to keep track of a lot of diff constants and we dnt wanat to store any info within this component
+        //instead lib/constants.ts 54:@5
+
 export const PUTER_WORKER_URL = import.meta.env.VITE_PUTER_WORKER_URL || "";
 
-// Storage Paths
+// Storage Paths : where we re gonna store the final images
 export const STORAGE_PATHS = {
     ROOT: "roomify",
     SOURCES: "roomify/sources",
@@ -24,6 +27,7 @@ export const UNAUTHORIZED_STATUSES = [401, 403];
 // Image Dimensions
 export const IMAGE_RENDER_DIMENSION = 1024;
 
+//MOST IMPORTANT THE ROOMIFY RENDER PROMPT 54:40
 export const ROOMIFY_RENDER_PROMPT = `
 TASK: Convert the input 2D floor plan into a **photorealistic, top‑down 3D architectural render**.
 

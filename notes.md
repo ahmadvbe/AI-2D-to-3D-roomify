@@ -61,5 +61,33 @@ https://vite.dev/
 ## 36:22 UI home PAGE
     app/routes/home.tsx
 
-    ## 45:15 IMPLEMENT THE AI THAT TAKES A BASIC A 2D FLOOR PLAN AND TRANSFORM IT
+  
     ## 45:34 PUSH THE CURRENT CHANGES
+
+
+  ## 46:00 IMPLEMENT THE AI THAT TAKES A BASIC A 2D FLOOR PLAN AND TRANSFORM IT
+  create a new branch
+    git checkout -b 'upload-files
+    components/Upload.tsx 46:29
+    import it in the app/routes/home.tsx
+    
+    //53:45 now we hve to keep track of a lot of diff constants and we dnt wanat to store any info within this component
+        //instead lib/constants.ts
+                    //MOST IMPORTANT THE ROOMIFY RENDER PROMPT 54:40
+
+   ## 55:55 IMPLEMENT THE ACTUAL DRAG AND DROP UPLOAD LOGIC @ components/Upload.tsx
+        USE OF AI TO DO IT FOR US 56:35 ---- 57:30
+            changes mainly done at the Upload.tsx file
+
+            59:28 VISUALIZE THE UPLOADED FILE
+                app/routes/visualizer.$id.tsx
+                Add this new route within  app/routes.ts
+            1:00:35 mpdify the onComplete @ the app/routes/home.tsx so we ll hve a    redirection   to this visualizer page just created app/routes/visualizer.$id.tsx
+            1:02:30 open up a PR pull request
+                push the chnages on this new branch
+                    git status
+                    git add . 
+                    git commit -m 
+                    git push --set-upstream origin upload-files
+##                1:03:50 code rabbit
+                    1:05:00 MAP descriptive
