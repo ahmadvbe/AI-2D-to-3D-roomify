@@ -72,7 +72,8 @@ export default function Home() {
         className="home">
           <Navbar />
 
-          <section className="hero">
+          <section  //36:40
+            className="hero">
               <div className="announce">
                   <div className="dot">
                       <div className="pulse"></div>
@@ -88,34 +89,42 @@ export default function Home() {
               </p>
 
               <div className="actions">
-                  <a href="#upload" className="cta">
+                  <a href="#upload"  //38:38
+                        className="cta">
                       Start Building <ArrowRight className="icon" />
                   </a>
 
-                  <Button variant="outline" size="lg" className="demo">
+                  <Button  //39:04
+                    variant="outline" size="lg" className="demo">
                       Watch Demo
                   </Button>
               </div>
 
-              <div id="upload" className="upload-shell">
-                <div className="grid-overlay" />
+              <div //39:25
+                id="upload" 
+                className="upload-shell">
+                <div //39:58
+                    className="grid-overlay" />
 
                   <div className="upload-card">
                       <div className="upload-head">
                           <div className="upload-icon">
-                              <Layers className="icon" />
+                              <Layers //40:25 lucide react
+                                className="icon" />
                           </div>
 
                           <h3>Upload your floor plan</h3>
                           <p>Supports JPG, PNG, formats up to 10MB</p>
                       </div>
 
-                      <Upload onComplete={handleUploadComplete} />
+                      <Upload 
+                        onComplete={handleUploadComplete} />
                   </div>
               </div>
           </section>
 
-          <section className="projects">
+          <section  //41:10 Display the projects being uploaded
+            className="projects">
               <div className="section-inner">
                   <div className="section-head">
                       <div className="copy">
@@ -124,29 +133,36 @@ export default function Home() {
                       </div>
                   </div>
 
-                  <div className="projects-grid">
+                  <div //42:10
+                    className="projects-grid">
                       {/* {projects.map(({id, name, renderedImage, sourceImage, timestamp}) => (
-                          <div key={id} className="project-card group" onClick={() => navigate(`/visualizer/${id}`)}>
-                              <div className="preview">
-                                  <img  src={renderedImage || sourceImage} alt="Project"
+                          <div      key={id} 
+                                    className="project-card group" 
+                                    onClick={() => navigate(`/visualizer/${id}`)}>
+                              <div      className="preview">
+                                  <img  
+                                    src={renderedImage || sourceImage} alt="Project"
                                   />
 
-                                  <div className="badge">
+                                  <div  //43:10
+                                    className="badge">
                                       <span>Community</span>
                                   </div>
                               </div>
 
-                              <div className="card-body">
+                              <div  //43:26
+                                className="card-body">
                                   <div>
                                       <h3>{name}</h3>
 
                                       <div className="meta">
                                           <Clock size={12} />
                                           <span>{new Date(timestamp).toLocaleDateString()}</span>
-                                          <span>By JS Mastery</span>
+                                          <span>By WEBE </span>
                                       </div>
                                   </div>
-                                  <div className="arrow">
+                                  <div. //44:25 
+                                    className="arrow">
                                       <ArrowUpRight size={18} />
                                   </div>
                               </div>

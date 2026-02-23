@@ -52,4 +52,14 @@ https://vite.dev/
 ##            30:30 components/Navbar.tsx
                 destruct the function 
 
-## 34:20 GITHUB push
+## 34:20 GITHUB push    
+        git init
+        git add . 
+    35:30 coe rabbit integration
+        https://app.coderabbit.ai/settings/repositories?code=72700bf53331e325ce43&installation_id=89242342&setup_action=update&utm_medium=influencer&utm_source=youtube&utm_campaign=awareness
+
+## 36:22 UI home PAGE
+    app/routes/home.tsx
+
+    ## 45:15 IMPLEMENT THE AI THAT TAKES A BASIC A 2D FLOOR PLAN AND TRANSFORM IT
+    ## 45:34 PUSH THE CURRENT CHANGES
