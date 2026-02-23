@@ -83,6 +83,10 @@ https://vite.dev/
                 app/routes/visualizer.$id.tsx
                 Add this new route within  app/routes.ts
             1:00:35 mpdify the onComplete @ the app/routes/home.tsx so we ll hve a    redirection   to this visualizer page just created app/routes/visualizer.$id.tsx
-            1:02:30 open up a PR
+            1:02:30 open up a PR pull request
                 push the chnages on this new branch
-                    
+                    git status
+                    git add . 
+                    git commit -m 
+                    git push --set-upstream origin upload-files
+                1:03:50 code rabbit
