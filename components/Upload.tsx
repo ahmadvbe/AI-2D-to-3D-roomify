@@ -38,7 +38,7 @@ const Upload = ({ onComplete }: UploadProps) => {
         setProgress(0); //RESET THE PROGRESS TO 0
 
         const reader = new FileReader();
-        reader.onerror = () => {
+        reader.onerror = () => { //1:07:20 error discovered by github
             setFile(null);
             setProgress(0);
         };
@@ -84,7 +84,7 @@ const Upload = ({ onComplete }: UploadProps) => {
         if (!isSignedIn) return;
 
         const droppedFile = e.dataTransfer.files[0];
-        const allowedTypes = ['image/jpeg', 'image/png'];
+        const allowedTypes = ['image/jpeg', 'image/png']; //1:07:50 coderabbit fixes -- allowed types
         if (droppedFile && allowedTypes.includes(droppedFile.type)) {
             processFile(droppedFile);
         }
