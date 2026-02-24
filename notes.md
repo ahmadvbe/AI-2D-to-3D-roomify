@@ -61,5 +61,76 @@ https://vite.dev/
 ## 36:22 UI home PAGE
     app/routes/home.tsx
 
-    ## 45:15 IMPLEMENT THE AI THAT TAKES A BASIC A 2D FLOOR PLAN AND TRANSFORM IT
+  
     ## 45:34 PUSH THE CURRENT CHANGES
+
+
+  ## 46:00 IMPLEMENT THE AI THAT TAKES A BASIC A 2D FLOOR PLAN AND TRANSFORM IT
+  create a new branch
+    git checkout -b 'upload-files
+    components/Upload.tsx 46:29
+    import it in the app/routes/home.tsx
+    
+    //53:45 now we hve to keep track of a lot of diff constants and we dnt wanat to store any info within this component
+        //instead lib/constants.ts
+                    //MOST IMPORTANT THE ROOMIFY RENDER PROMPT 54:40
+
+   ## 55:55 IMPLEMENT THE ACTUAL DRAG AND DROP UPLOAD LOGIC @ components/Upload.tsx
+        USE OF AI TO DO IT FOR US 56:35 ---- 57:30
+            changes mainly done at the Upload.tsx file
+
+            59:28 VISUALIZE THE UPLOADED FILE
+                app/routes/visualizer.$id.tsx
+                Add this new route within  app/routes.ts
+            1:00:35 mpdify the onComplete @ the app/routes/home.tsx so we ll hve a    redirection   to this visualizer page just created app/routes/visualizer.$id.tsx
+            1:02:30 open up a PR pull request
+                push the chnages on this new branch
+                    git status
+                    git add . 
+                    git commit -m 
+                    git push --set-upstream origin upload-files
+##                1:03:50 code rabbit
+                    1:05:00 MAP descriptive
+
+## NEW BRANCH - displaying our images within the visulaizer and hosting them 1:09:10
+     git checkout -b 'hosting-images' 
+
+     why using Puter tools instead of traditional setup like SQL DB or a cloud Provider 1:09:27
+     in a typical app you would:
+        -rent a server
+        -setup postgres sql 
+        -manage AWS S3 bucket for images
+        -juggkle a dozen of API keys just to get started CLAUDE, GEMINI
+        1:09:48 Puter gives you a unified environmnet where evg talk to each other
+        1:0957 three Pillars we ll use
+            1-Puter KV is a Key-Value store, zero config database 1:10:00
+                    u call puter.kv.set from the FE and its aved on the cloud , no server rerquired
+                    each user store theri own data int heir own puter acc, so ur infrastrcuture cost stays at zero 
+            2-File System and HOSTING for image Storage and Delivery 1:10:36
+                normally u use AWS S3 which requires Backend  signing and permissions 
+                    but here we use the Puter FS to write the imge file to the users cloud storage
+                    and Puter Hosting to store them : it takes the folder and instantlty turns it into live URL 1:11:05
+            3-Workers , the secure BE part 1:11:20 so if Puter handle so much in the FE why do we need workers at all
+                    client side has one weakness , Privacy, the Puter SDK only lets the user see their own files    
+                        but if u wana share a roomify project with a friend , their browser cant access ur storage 
+                            Workers act as ur BE API 1:11:40
+                            so
+                                1-Kv handle records 1:12:00
+                                2-FS + Hosting handles images
+                                3-Workers hanldes security
+                                    No server setup , just focusinjg on features
+ ##           1:12:20  lib/puter.hosting.ts
+ ##               this file will handle the upload of the images   TO THE PUTER HOSTED DOMAIN
+    WE NEED TO CREATE A FUNCTION THAT CHECKS IF A SUBDOMAIN IS PRESENT IN. THE KEY VALUE STORE PUTER'S DATABASE
+    
+ s  1:19:52 to implement this upload image to hosting we need 
+        a lot of additional utility funcs lib/utils.ts to be ussed within the 
+                    lib/puter.hosting.ts
+        
+    1:26:12 now we hve to use the function uploadImageToHosting created  within the lib/puter.hosting.ts within the lib/puter.action.ts **createProject function**
+
+    test is done here 1:32:56 test it out and check whether we can get this payload out and we will call this function createProject in our app/routes/home.tsx
+
+##    1:38:00 app/routes/visualizer.$id.tsx
+
+

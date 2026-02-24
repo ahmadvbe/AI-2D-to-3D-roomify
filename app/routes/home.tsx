@@ -5,7 +5,9 @@ import Button from "../../components/ui/Button";
 import Upload from "../../components/Upload";
 import {useNavigate} from "react-router";
 import {useEffect, useRef, useState} from "react";
-// import {createProject, getProjects} from "../../lib/puter.action";
+
+//and we will call this function createProject in our app/routes/home.tsx
+import {createProject, getProjects} from "../../lib/puter.action";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -16,42 +18,48 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() { 
     const navigate = useNavigate();
-    // const [projects, setProjects] = useState<DesignItem[]>([]);
-    const isCreatingProjectRef = useRef(false);
+
+    //test of the create Project func created at lib/puter.action.ts 1:33:00
+    const [projects, setProjects] = useState<DesignItem[]>([]);
+    // const isCreatingProjectRef = useRef(false);
 
     const handleUploadComplete = async (base64Image: string) => {
         // try {
 
         //     if(isCreatingProjectRef.current) return false;
         //     isCreatingProjectRef.current = true;
-        //     const newId = Date.now().toString();
-        //     const name = `Residence ${newId}`;
+             const newId = Date.now().toString();
+             const name = `Residence ${newId}`; //1:33:40
 
-        //     const newItem = {
-        //         id: newId, name, sourceImage: base64Image,
-        //         renderedImage: undefined,
-        //         timestamp: Date.now()
-        //     }
+            const newItem = { //1:34:00
+                id: newId, name, sourceImage: base64Image,
+                renderedImage: undefined,
+                timestamp: Date.now()
+            }
 
-        //     const saved = await createProject({ item: newItem, visibility: 'private' });
+            //1:34:25 call the craete project func
+            const saved = await createProject({ 
+                    item: newItem, 
+                    visibility: 'private' });
 
-        //     if(!saved) {
-        //         console.error("Failed to create project");
-        //         return false;
-        //     }
+            if(!saved) {//1:34:40 if it doesnt exist
+                console.error("Failed to create project");
+                return false;
+            }
+                    //if success 1:35:00
+            setProjects((prev) => [saved, ...prev]); //prepend the new item instead of appending it
+            //so it comes on top 
 
-        //     setProjects((prev) => [saved, ...prev]);
+            navigate(`/visualizer/${newId}`),
+             { //1:35:20 provide some additonal state
+                state: { //pass our initial image 
+                    initialImage: saved.sourceImage, //before
+                    initialRendered: saved.renderedImage || null, //after
+                    name
+                }
+            };
 
-        //     navigate(`/visualizer/${newId}`, {
-        //         state: {
-        //             initialImage: saved.sourceImage,
-        //             initialRendered: saved.renderedImage || null,
-        //             name
-        //         }
-        //     }
-        // );
-
-        //     return true;
+            return true;
         // } finally {
         //     isCreatingProjectRef.current = false;
         // }
@@ -135,7 +143,10 @@ export default function Home() {
 
                   <div //42:10
                     className="projects-grid">
-                      {/* {projects.map(({id, name, renderedImage, sourceImage, timestamp}) => (
+                            {/* //1:36:00 */}
+                      {projects.map(({id, name, renderedImage, sourceImage, timestamp}) => (
+                        //automatic return this project card group 
+                        // - return multiple cards nt only one
                           <div      key={id} 
                                     className="project-card group" 
                                     onClick={() => navigate(`/visualizer/${id}`)}>
@@ -152,7 +163,8 @@ export default function Home() {
 
                               <div  //43:26
                                 className="card-body">
-                                  <div>
+                                  <div //render the real name 1:37:10
+                                    >
                                       <h3>{name}</h3>
 
                                       <div className="meta">
@@ -161,13 +173,13 @@ export default function Home() {
                                           <span>By WEBE </span>
                                       </div>
                                   </div>
-                                  <div. //44:25 
+                                  <div //44:25 
                                     className="arrow">
                                       <ArrowUpRight size={18} />
                                   </div>
                               </div>
                           </div>
-                      ))} */}
+                      ))}
                   </div>
               </div>
           </section>

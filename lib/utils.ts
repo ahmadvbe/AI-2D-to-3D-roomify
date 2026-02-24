@@ -1,10 +1,10 @@
-export const HOSTING_CONFIG_KEY = "roomify_hosting_config";
-export const HOSTING_DOMAIN_SUFFIX = ".puter.site";
+export const HOSTING_CONFIG_KEY = "roomify_hosting_config";//1:14:15
+export const HOSTING_DOMAIN_SUFFIX = ".puter.site";//1:14:32 
 
 export const isHostedUrl = (value: unknown): value is string =>
     typeof value === "string" && value.includes(HOSTING_DOMAIN_SUFFIX);
 
-export const createHostingSlug = () =>
+export const createHostingSlug = () => //1:15:45 immediate return with no {}
     `roomify-${Date.now().toString(36)}-${Math.random()
         .toString(36)
         .slice(2, 8)}`;
@@ -47,7 +47,7 @@ export const getImageExtension = (contentType: string, url: string): string => {
     return "png";
 };
 
-export const dataUrlToBlob = (
+export const dataUrlToBlob = ( //transform the data from url to a BLOB
     dataUrl: string,
 ): { blob: Blob; contentType: string } | null => {
     try {
