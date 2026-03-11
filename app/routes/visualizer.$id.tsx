@@ -3,31 +3,36 @@ import {useEffect, useRef, useState} from "react";
 import {generate3DView} from "../../lib/ai.action";
 import {Box, Download, RefreshCcw, Share2, X} from "lucide-react";
 import Button from "../../components/ui/Button";
-// import {createProject, 
-//         //getProjectById
-//     } from "../../lib/puter.action";
+import {createProject, 
+        getProjectById
+    } from "../../lib/puter.action";
 // import {ReactCompareSlider, ReactCompareSliderImage} from "react-compare-slider";
 
             // 59:28 VISUALIZE THE UPLOADED FILE
             //     app/routes/visualizer.$id.tsx
 const VisualizerId = () => {
-    const { id } = useParams(); //get access to that state we pass into the new page
+    const { id } = useParams(); //get access to that state we pass into the new page 2:31:40 extract the id of the project we re currently checking 
+    const { userId } = useOutletContext<AuthContext>() //2:31:55   then we extract also the userId 
+    // then we create the snipped state of Project and setProject, isPojectloading, setIsProjectLoading
 
     const navigate = useNavigate();//1:55:45 in case we need to renavigate back to home
-    const location = useLocation()
-    const {initialImage, initialRender, name} = location.state || {} 
-    console.log("initial image", initialImage)
+    // const location = useLocation()
+    // const {initialImage, initialRender, name} = location.state || {} //2:32:50 no need for location satte anymore becz we ll be uing the data coming from the BE
+    //console.log("initial image", initialImage)
  
-    const { userId } = useOutletContext<AuthContext>()
+    
 
     const hasInitialGenerated = useRef(false); //1:55:53
 
    
-    const [project, setProject] = useState<DesignItem | null>(null);
-    const [isProjectLoading, setIsProjectLoading] = useState(true);
+    const [project, setProject] = useState<DesignItem | null>(null); //2:32:10 bcz its null at the state so we add a null as a type also
+    const [isProjectLoading, setIsProjectLoading] = useState(true); //2:32:30
 
      //add additional useStates 1:56:10
     const [isProcessing, setIsProcessing] = useState(false);
+
+    //and in the currentImage we wont be updating it from the initialRender <string | null>(initialRender || null);
+    //we ll be uing the data coming from the BE
     const [currentImage, setCurrentImage] = useState<string | null>(null);
 
     const handleBack = () => navigate('/'); //1:57:00 nav back to home
@@ -45,41 +50,46 @@ const VisualizerId = () => {
 
      //1:57:10 where we ll call the generate3DView created @lib/ai.action.ts here
     const runGeneration = async (
-         //item: DesignItem
+         item: DesignItem//but rather we ll get an item as input to this function 2:33:05
     ) => {
-        //if(!id || !item.sourceImage) return; //check whether we hve access to the initial image
+        
         //console.log("app/routes/visualizer.$id.tsx/runGeneration has begun working")
-        if(!initialImage) return
-        // console.log("app/routes/visualizer.$id.tsx/initialImage",initialImage)
+        //if(!initialImage) return//2:33:00  we no longer hve this initial image coming from the state we re passing from the home page
+        //but rather we ll get an item as input to this function 2:33:15
+        if(!id || !item.sourceImage) return; 
+
 
         try { //if we do we ll try to genertae the 3d view
             setIsProcessing(true); //display sort of loading 1:57:33
                 //extract the result out of the call
-            const result = await generate3DView({ sourceImage: initialImage}) //1:57:50
-                          //item.sourceImage }); 
+            const result = await generate3DView({ sourceImage: 
+                                        //initialImage //1:57:50
+                          item.sourceImage  //2:33:20 update it from intialImage to data coming from our BackEnd
+                        }); 
 
                 console.log("app/routes/visualizer.$id.tsx/generate3DView/renderedImage", result)
 
             if(result.renderedImage) { //if we get back a result we set it to the state 1:58:00
                 setCurrentImage(result.renderedImage);
 
-                //once we get this image we ll also hve to update 1:58:05
-                   //  the project in the DB with the rendered image
-                // const updatedItem = {
-                //     ...item,
-                //     renderedImage: result.renderedImage,
-                //     renderedPath: result.renderedPath,
-                //     timestamp: Date.now(),
-                //     ownerId: item.ownerId ?? userId ?? null,
-                //     isPublic: item.isPublic ?? false,
-                // }
+                //once we get this image we ll also hve to update 1:58:05 the project in the DB with the rendered image
+                // 2:33:30 updating process
+                const updatedItem = { //object 
+                    ...item, //first spread the initial item data
+                    renderedImage: result.renderedImage, //append the renderedImage to it 2:33:50
+                    renderedPath: result.renderedPath,
+                    timestamp: Date.now(),
+                    ownerId: item.ownerId ?? userId ?? null,
+                    isPublic: item.isPublic ?? false,
+                }
+                   // 2:34:25 2nd call of the create project action
+                const saved = await createProject({ item: updatedItem, 
+                                                    visibility: "private" })
 
-                // const saved = await createProject({ item: updatedItem, visibility: "private" })
-
-                // if(saved) {
-                //     setProject(saved);
-                //     setCurrentImage(saved.renderedImage || result.renderedImage);
-                // }
+                if(saved) { //2:34:47 if project is properly saved
+                    setProject(saved); //set it to the state
+                    setCurrentImage(saved.renderedImage || result.renderedImage);//set it to the state
+                }
             }
         } catch (error) { //1:58:30
             console.error('Generation failed: ', error)
@@ -88,64 +98,68 @@ const VisualizerId = () => {
         }
     }
 
-    // useEffect(() => { 
-    //     let isMounted = true;
+    //2:35:07 use of useEffect to make sure that evg is updated so that we ensure our projects get displayed properly
+    useEffect(() => { 
+        let isMounted = true; //check whetehr the component has mounted
 
-    //     const loadProject = async () => {
-    //         if (!id) {
-    //             setIsProjectLoading(false);
-    //             return;
-    //         }
+        const loadProject = async () => {
+            if (!id) {
+                setIsProjectLoading(false); //set the project loading to false at the start if it doesnt exist
+                return;
+            }
+                //but if it does exist 2:35:38
+            setIsProjectLoading(true);
+                //fetched the current project
+            const fetchedProject = await getProjectById({ id });
 
-    //         setIsProjectLoading(true);
+            if (!isMounted) return;
 
-    //         const fetchedProject = await getProjectById({ id });
+            //set to states 2:35:50    
+            setProject(fetchedProject);
+            setCurrentImage(fetchedProject?.renderedImage || null);
+            setIsProjectLoading(false);
+            hasInitialGenerated.current = false;
+        };
 
-    //         if (!isMounted) return;
+        //we simply call it 2:35:58
+        loadProject();
 
-    //         setProject(fetchedProject);
-    //         setCurrentImage(fetchedProject?.renderedImage || null);
-    //         setIsProjectLoading(false);
-    //         hasInitialGenerated.current = false;
-    //     };
+        return () => { //unmount
+            isMounted = false;
+        };
+    }, [id]);
 
-    //     loadProject();
-
-    //     return () => {
-    //         isMounted = false;
-    //     };
-    // }, [id]);
-
-    useEffect(() => {//1:58:50 keep track of the changes
+    useEffect(() => {//1:58:50 keep track of the changes //2:36:00 checking whther smtg goes wrong
         // console.log("app/routes/visualizer.$id.tsx -- use effect is working")
-        console.log("app/routes/visualizer.$id.tsx --initialImage",initialImage)
-        console.log("app/routes/visualizer.$id.tsx -- hasInitialGenerated.current=",hasInitialGenerated.current)
-        console.log("app/routes/visualizer.$id.tsx -- !project?.sourceImage= ", !project?.sourceImage )
-        console.log("app/routes/visualizer.$id.tsx --initialImage",initialImage)
+        // console.log("app/routes/visualizer.$id.tsx --initialImage",initialImage)
+        // console.log("app/routes/visualizer.$id.tsx -- hasInitialGenerated.current=",hasInitialGenerated.current)
+        // console.log("app/routes/visualizer.$id.tsx -- !project?.sourceImage= ", !project?.sourceImage )
+        // console.log("app/routes/visualizer.$id.tsx --initialImage",initialImage)
 
-        if(!initialImage || hasInitialGenerated.current) return //1:59:05
-        // if ( //1:59:03
-        //     //isProjectLoading ||
-        //     hasInitialGenerated.current || !project?.sourceImage ) return;
+       // if(!initialImage || hasInitialGenerated.current) return //1:59:05
+        if ( //2:36:05
+            isProjectLoading ||
+            hasInitialGenerated.current || !project?.sourceImage ) return;
        
 
-         console.log("app/routes/visualizer.$id.tsx -- initialRender", initialRender)
-        if(initialRender){ //1:59:15
-            setCurrentImage(initialRender)
-            hasInitialGenerated.current = true; //update the ref
-            return; //1:59:30
-        }
-        // if (project.renderedImage) { //1:59:15
-        //     setCurrentImage(project.renderedImage);``
+         //console.log("app/routes/visualizer.$id.tsx -- initialRender", initialRender)
+        // if(initialRender){ //1:59:15
+        //     setCurrentImage(initialRender)
         //     hasInitialGenerated.current = true; //update the ref
         //     return; //1:59:30
         // }
+        if (project.renderedImage) { //2:36:10
+            setCurrentImage(project.renderedImage);//update the image to be the rendered one
+            hasInitialGenerated.current = true; //update the ref
+            return; //1:59:30
+        }
         
 
         hasInitialGenerated.current = true; //update the initialRef 1:59:33
-        void runGeneration();
-    }, [initialImage, initialRender]) //1:58:55
-    //[project, isProjectLoading]);
+        void runGeneration(project);
+        //void runGeneration();
+    }, //[initialImage, initialRender]) //1:58:55
+        [project, isProjectLoading]);
 
     return ( //1:59:50 start displaying the vizualizer
         <div className="visualizer">
@@ -166,7 +180,7 @@ const VisualizerId = () => {
                 </Button>
             </nav>
 
-            <section //2:02:25 
+            <section //2:02:25  2:36:20
                 className="content">
                 <div className="panel">
                     <div className="panel-header">
@@ -207,11 +221,12 @@ const VisualizerId = () => {
                                 className="render-img" />
                         ) : ( //ESLE 2:05:12 if current image doesnt exists 
                             <div className="render-placeholder">
-                                {//project?.sourceImage
-                                initialImage //2:05:25
+                                {project?.sourceImage
+                                //initialImage //2:05:25
                                  && ( //check whether w ehve access to the source initial image
                                     <img 
-                                        src={initialImage}//project?.sourceImage} //2:05:34
+                                        //src={initialImage} //2:05:34
+                                        src={project?.sourceImage} //2:36:40
                                         alt="Original" 
                                         className="render-fallback" />
                                 )}

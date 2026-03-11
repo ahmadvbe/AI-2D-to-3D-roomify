@@ -25,10 +25,13 @@ export const createProject = async ({  //1:27:15 object cntaining
             visibility = "private" }
      : CreateProjectParams):
       Promise<DesignItem | null | undefined> => { //return a promise which get resolved into
-    // if(!PUTER_WORKER_URL) {
-    //     console.warn('Missing VITE_PUTER_WORKER_URL; skip history fetch;');
-    //     return null;
-    // }
+
+    if(!PUTER_WORKER_URL) { //2:27:00
+        console.warn('Missing VITE_PUTER_WORKER_URL; skip history fetch;');
+        return null;
+    }
+
+
     const projectId = item.id; //1:27:58
          console.log("lib/puter.action.ts, iTem", item)
          console.log("lib/puter.action.ts, Project ID", projectId)
@@ -99,88 +102,106 @@ export const createProject = async ({  //1:27:15 object cntaining
     }
 
     try { //1:32:22
-        //1:32:38 call the Puter Worker to store the project in KV
-        //key value DB
-        return payload //test is done here 1:32:56 test 
+        //1:32:38 call the Puter Worker to store the project in KV 2:27:50 key value DB
+        // CALL AN ACTION FROM OUR BACKEND URL
+        
+        
         // it out and check whether we can get this payload out
         //and we will call this function createProject in our app/routes/home.tsx
 
 
-        // const response = await puter.workers.exec(`${PUTER_WORKER_URL}/api/projects/save`, {
-        //     method: 'POST',
-        //     body: JSON.stringify({
-        //         project: payload,
-        //         visibility
-        //     })
-        // });
+        //2:28:15 call our worker 2:38:15 Junie modifications done to prevent an error
+        const response = await puter.workers.exec(`${PUTER_WORKER_URL}/api/projects/save`, {
+            method: 'POST',
+            body: JSON.stringify({ //2:28:25
+                project: payload,
+                visibility //which we get as a 2nd param on the beginning of the func
+            })
+        });
 
-        // if(!response.ok) {
-        //     console.error('failed to save the project', await response.text());
-        //     return null;
-        // }
+        if(!response.ok) { //2:29:10 if not saved
+            console.error('failed to save the project', await response.text());
+            return null;
+        }
 
-        // const data = (await response.json()) as { project?: DesignItem | null }
+        //if saved correctly 2:29:30 =>extract the data from it     
+         const data = (await response.json()) as { project?: DesignItem | null } //as a project of DesingItem not an array type
 
-        // return data?.project ?? null;
+         //return payload //test is done here 1:32:56 test 
+         return data?.project ?? null;
     } catch (e) { //1:32:26
         console.log('Failed to save project', e)
         return null;
     }
 }
 
-// export const getProjects = async () => {
-//     if(!PUTER_WORKER_URL) {
-//         console.warn('Missing VITE_PUTER_WORKER_URL; skip history fetch;');
-//         return []
-//     }
 
-//     try {
-//         const response = await puter.workers.exec(`${PUTER_WORKER_URL}/api/projects/list`, { method: 'GET' });
+// ## 2:21:50 DISPLAY THE DATA
+//     lib/puter.action.ts 2:22:00 CREATE THE FUNCTION - ALLOWING US TO LIST THE PROJECTS SOTRED IN THE KV STORAGE VIA  THE WORKER ROUTES
+export const getProjects = async () => { //2:22:15
+    if(!PUTER_WORKER_URL) { //COMING FROM CONSTANS WHICH IS DERIVED FROM OUR ENVS .env.local.  2:22:50
+        console.warn('Missing VITE_PUTER_WORKER_URL; skip history fetch;');
+        return []
+    }
 
-//         if(!response.ok) {
-//             console.error('Failed to fetch history', await response.text());
-//             return [];
-//         }
+        //2:23:00
+    try {  //2:23:22
+        const response = await puter.workers.exec(//EXECUSTE THE FOLLOWING FUNC WITH THE PUTER WORKER 2:23:37 
+            `${PUTER_WORKER_URL}/api/projects/list`, //WE RE CALLING OUR BE 2:24:05
+             { method: 'GET' });//WITH A METHOD OF GET 
 
-//         const data = (await response.json()) as { projects?: DesignItem[] | null };
+        if(!response.ok) { //2:24:15 CHECK 
+            console.error('Failed to fetch history', 
+                            await response.text()
+                        );
+            return [];
+        }
 
-//         return Array.isArray(data?.projects) ? data?.projects : [];
-//     } catch (e) {
-//         console.error('Failed to get projects', e);
-//         return [];
-//     }
-// }
+        //ELSE IF RESPONSE IS OKAY 2:24:38
+        //EXTRACT HE DATA FROM THE RESPONSE
+        const data = (await response.json()) as { projects?: DesignItem[] | null }; //ITS GONNA BE A LIST OF DIFF DesignItem 2:25:00
 
-// export const getProjectById = async ({ id }: { id: string }) => {
-//     // if (!PUTER_WORKER_URL) {
-//     //     console.warn("Missing VITE_PUTER_WORKER_URL; skipping project fetch.");
-//     //     return null;
-//     // }
+        return Array.isArray(data?.projects) ? data?.projects : [];
+    } catch (e) { //2:23:10
+        console.error('Failed to get projects', e);
+        return [];
+    }
+}
 
-//     console.log("Fetching project with ID:", id);
 
-//     try {
-//         const response = await puter.workers.exec(
-//             `${PUTER_WORKER_URL}/api/projects/get?id=${encodeURIComponent(id)}`,
-//             { method: "GET" },
-//         );
+//Lets create the getPorject by ID action within 2:30:30 within the lib/puter.action.ts
 
-//         console.log("Fetch project response:", response);
+export const getProjectById = async ({ id }: { id: string }) => { //2:30:52
+    if (!PUTER_WORKER_URL) {
+        console.warn("Missing VITE_PUTER_WORKER_URL; skipping project fetch.");
+        return null;
+    }
 
-//         if (!response.ok) {
-//             console.error("Failed to fetch project:", await response.text());
-//             return null;
-//         }
+    console.log("lib/puter.action.ts/Fetching project with ID:", id);
 
-//         const data = (await response.json()) as {
-//             project?: DesignItem | null;
-//         };
+    try { //calla nother one of our endpoint within our worker and pass in the ID 2:31:00
+        const response = await puter.workers.exec(
+            `${PUTER_WORKER_URL}/api/projects/get?id=${encodeURIComponent(id)}`,
+            { method: "GET" },
+        );
 
-//         console.log("Fetched project data:", data);
+        console.log("lib/puter.action.ts/getprojectbyID/Fetch project response:", response);
 
-//         return data?.project ?? null;
-//     } catch (error) {
-//         console.error("Failed to fetch project:", error);
-//         return null;
-//     }
-// };
+        if (!response.ok) { //we do some error handling
+            console.error("Failed to fetch project:", await response.text());
+            return null;
+        }
+
+        //data extraction 2:31:09
+        const data = (await response.json()) as {
+            project?: DesignItem | null;
+        };
+
+        console.log("lib/puter.action.ts/getprojectbyID/Fetched project data:", data);
+
+        return data?.project ?? null;
+    } catch (error) {
+        console.error("Failed to fetch project:", error);
+        return null;
+    }
+};

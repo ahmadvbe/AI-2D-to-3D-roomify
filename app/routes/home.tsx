@@ -8,7 +8,7 @@ import {useEffect, useRef, useState} from "react";
 
 //and we will call this function createProject in our app/routes/home.tsx
 import {createProject, 
-    //getProjects
+    getProjects
 } 
     from "../../lib/puter.action";
 
@@ -24,13 +24,16 @@ export default function Home() {
 
     //test of the create Project func created at lib/puter.action.ts 1:33:00
     const [projects, setProjects] = useState<DesignItem[]>([]);
-    // const isCreatingProjectRef = useRef(false);
+
+    //2:26:05
+     const isCreatingProjectRef = useRef(false);
 
     const handleUploadComplete = async (base64Image: string) => {
-        // try {
+         try {
 
-        //     if(isCreatingProjectRef.current) return false;
-        //     isCreatingProjectRef.current = true;
+             if(isCreatingProjectRef.current) return false; //2:26:26 BCZ WE RE CURRENLTY CREATING THE PROJECT
+             isCreatingProjectRef.current = true;//ELSE WE RE GONNA SIMPLY SET IT TO TRUE SO WE CAN CONTINUE WITH UPLOAD
+
         console.log("app/routes/home.tsx, handling is upload")
              const newId = Date.now().toString();
              const name = `Residence ${newId}`; //1:33:40
@@ -73,19 +76,21 @@ export default function Home() {
             });
             
             return true;
-        // } finally {
-        //     isCreatingProjectRef.current = false;
-        // }
+        } finally { //2:26:50
+            isCreatingProjectRef.current = false; //SET IT BACK TO FALSE
+        }
     }
 
-    useEffect(() => {
+    // ##                    2:36:55 TEST missing data/projects not being displayed
+    //             2:40:40 our projects arent being updated 
+    useEffect(() => { 
         const fetchProjects = async () => {
-            // const items = await getProjects();
+             const items = await getProjects(); //2:40:50
 
-            // setProjects(items)
+             setProjects(items)
         }
 
-        fetchProjects();
+        fetchProjects(); //call the func created prev 2:41:15
     }, []);
 
   return (
@@ -162,7 +167,8 @@ export default function Home() {
                         // - return multiple cards nt only one
                           <div      key={id}  //1:44:00 code rabbit fix
                                     className="project-card group" 
-                                    onClick={() => navigate(`/visualizer/${id}`)}>
+                                    onClick={() => navigate(`/visualizer/${id}`)} //2:42:05 once u clikc on one of the projects
+                                    >
                               <div      className="preview">
                                   <img  
                                     src={renderedImage || sourceImage} alt="Project"

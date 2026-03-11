@@ -162,4 +162,84 @@ https://vite.dev/
  ##               IF YOU REFRESH THE PAGE ITS GONE IT WILL BE RECREATED AGAIN 2:09:08
                 WE HAVE TO HOST THIS AI generated Image on the puter Site Submdomain 
  ##               and save thie project info into the key value DB too
-             2:09:35 git save   
+ 
+ ##            2:09:35 git save   
+                git add .
+                git commit -m "genertae 3d desing"
+                git push
+##              CODE RABIT REVIEW/BRIEF DESCRIPTION   2:10:08
+
+##   2:11:00 HOSTING THE GENERATED AI IMAGE ON PUTER THEN SAVING IT INTO THE DATABASE
+         2:11:11 **setting up Puter js ServerLess Workers** 
+            serverless funcs running js code on the cloud
+            routerbased sys to handle http requests
+                and then integrate with Puter Cloud Services like:
+                    -FILE STORAGE
+                    -KEY VALUES DATABASES
+                    -AI APIS
+##            **In our case we re using Workers bcz public data and Cross user lookup need server side Priviliges
+                the client SDk can only read and write the current user's private key value pairs 2:11:48
+##            BUt the worker runs with a service context to store anf fetch piblic or shared projects for all of the users
+##             lib/puter.worker.js 2:12:05. - where we ll build our OWN REST API
+                where we ll define the worker routes that will call the Puter KV storage to save the porject 2:12:12
+                2:12:16 so we create route.post that can be activated when we caLL the path of  /api/projects/save
+                    
+                WE LL ALSO CREATE SOME HELPER FUNCTIONS WHICH WE LL BE USING TO HELP US DURING OUR ENDPOINTS DEFINTION EXAMPLE ROUTER.POST
+                    jsonError , getUserId
+                THE ENDPOINTS ARE 
+                    router.post('/api/projects/save', async ({ request, user }) 
+                    router.get('/api/projects/list', async ({ user }) => {
+                    router.get('/api/projects/get', async ({ request, user }) => {
+## DEPLOY THe above create Worker @ puter.com 2:20:16
+    open puter.com and rc on the desktop create a worker and rename it
+        where we hve to transfer over our worker from the app 2:20:35
+            copy the routes craeted at puter.worker.js
+                and paste them there above the existing routes
+            that way we ll bring all the func we created directly within this puter worker 2:20:48
+            then minimize it and rc on the file and choose Publish as a worker (uncheck the sandbox)
+                https://elegant-ocean-931777.puter.work
+        U just deployed your own BE API 2:21:13
+                2:21:16 lets moce this url into our envs .env.local
+                    VITE_PUTER_WORKER_URL=https://elegant-ocean-931777.puter.work.  2:21:36
+
+## NEXT LESSON WE LL CONNECT THIS WORKER WITH FRONT END TO CREATE/SAVE/OR GET PROJECT INFO
+
+## 2:21:50 DISPLAY THE DATA
+    lib/puter.action.ts 2:22:00 CREATE THE FUNCTION - ALLOWING US TO LIST THE PROJECTS SOTRED IN THE KV STORAGE VIA  THE WORKER ROUTES
+
+    SINCE WE DEFINED 2 ROUTES/ENDPOINTS WITHIN THE WORKER.JS@ PUTER.COM OR lib/puter.worker.js
+        =>WE HVE TO WRITE ACTIONS FOR BOTH TO GET THE LIST OF PROJECTS AND ALSO GET THE PROEJECT BY ID   
+        WE WILL NO LONGER SHARE INFORMATION ABOUT THE PROJECT THROUGH THE STATE OBJECT PASSED FROM THE app/routes/home.tsx 
+            WHEN WE CALL THE NAVIGATE 
+            ==>RATHER WLL JUST REDIRECT THE USER TO THE VISUALIZER PAGE , 
+            ->GET ID of the project FROM THE URL 
+            ->AND THEN FETCH THAT PROJECT BASED ON ID 
+
+            2:28:15 call the action at lib/puter.action.ts/create project 
+                await puter.workers.exec(`${PUTER_WORKER_URL}/api/projects/save` which is gonna call our worker
+
+            2:30:00 call of the create Project in the visualizer page as well for a 2nd time
+            the way we re doing it here that we:
+                - 1st call: the create project upon image upload
+                =>that way the source or input image is stored into kv key value pair puter database 2:30:16
+                and then when directed to the visualizer page, AI image generates 
+                - 2nd call: and  where we call the create project again to now sAve the AI genertaed image 2:30:26
+
+##            2:30:30  Lets create the getPorject by ID action within  within the lib/puter.action.ts
+
+##            2:31:20 @ app/routes/visualizer.$id.tsx use of our BE /worker actions within our Front End 
+                in order to update the project with the renderd image
+                but we hve to create a couple more states and params to be able to track things
+                    2:31:40 extract the id of the project we re currently checking , 
+                        extract the userid
+                    2:33:30 updating process
+                        2:34:25 2nd call of the create project action
+                    2:34:47 if project is properly saved
+                        =>set it to the project state and Current Image state
+                    2:35:07 use of 2 useEffects to make sure that evg is updated so that we ensure our projects get displayed properly
+##                    2:36:55 TEST out
+                2:40:40 our projects arent being updated 
+                    =>solution update the useEffect at the home.tsx where we will be updating our projects states
+                2:41:46 reload the home page and u will see the newly created residence
+
+## 2:42:40 commit chanGES
