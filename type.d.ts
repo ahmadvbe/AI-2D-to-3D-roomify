@@ -109,10 +109,14 @@ type AuthRequiredModalProps = {
 type ShareAction = "share" | "unshare";
 type ShareStatus = "idle" | "saving" | "done";
 
-type HostingConfig = { subdomain: string };
+
+
+type HostingConfig = { subdomain: string }; //1:13:20 object contyaining a subdomain of a type string
 type HostedAsset = { url: string };
 
-interface StoreHostedImageParams {
+
+
+interface StoreHostedImageParams {//1:19:02
     hosting: HostingConfig | null;
     url: string;
     projectId: string;

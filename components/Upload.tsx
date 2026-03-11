@@ -8,97 +8,97 @@ interface UploadProps {
 }
 
 const Upload = ({ onComplete }: UploadProps) => {
-    // const [file, setFile] = useState<File | null>(null);
-    // const [isDragging, setIsDragging] = useState(false);
-    // const [progress, setProgress] = useState(0);
-    // const intervalRef = useRef<NodeJS.Timeout | null>(null);
-    // const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const [file, setFile] = useState<File | null>(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const [progress, setProgress] = useState(0);
+    const intervalRef = useRef<NodeJS.Timeout | null>(null);
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-    // const { isSignedIn } = useOutletContext<AuthContext>();
+    const { isSignedIn } = useOutletContext<AuthContext>();
 
     useEffect(() => {
-        // return () => {
-        //     if (intervalRef.current) {
-        //         clearInterval(intervalRef.current);
-        //         intervalRef.current = null;
-        //     }
-        //     if (timeoutRef.current) {
-        //         clearTimeout(timeoutRef.current);
-        //         timeoutRef.current = null;
-        //     }
-        // };
+        return () => {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+                intervalRef.current = null;
+            }
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+                timeoutRef.current = null;
+            }
+        };
     }, []);
 
-    // const processFile = useCallback((file: File) => {
-    //     if (!isSignedIn) return;
+    const processFile = useCallback((file: File) => {
+        if (!isSignedIn) return;
 
-    //     setFile(file);
-    //     setProgress(0);
+        setFile(file);
+        setProgress(0);
 
-    //     const reader = new FileReader();
-    //     reader.onerror = () => {
-    //         setFile(null);
-    //         setProgress(0);
-    //     };
-    //     reader.onloadend = () => {
-    //         const base64Data = reader.result as string;
+        const reader = new FileReader();
+        reader.onerror = () => {
+            setFile(null);
+            setProgress(0);
+        };
+        reader.onloadend = () => {
+            const base64Data = reader.result as string;
 
-    //         intervalRef.current = setInterval(() => {
-    //             setProgress((prev) => {
-    //                 const next = prev + PROGRESS_INCREMENT;
-    //                 if (next >= 100) {
-    //                     if (intervalRef.current) {
-    //                         clearInterval(intervalRef.current);
-    //                         intervalRef.current = null;
-    //                     }
-    //                     timeoutRef.current = setTimeout(() => {
-    //                         onComplete?.(base64Data);
-    //                         timeoutRef.current = null;
-    //                     }, REDIRECT_DELAY_MS);
-    //                     return 100;
-    //                 }
-    //                 return next;
-    //             });
-    //         }, PROGRESS_INTERVAL_MS);
-    //     };
-    //     reader.readAsDataURL(file);
-    // }, [isSignedIn, onComplete]);
+            intervalRef.current = setInterval(() => {
+                setProgress((prev) => {
+                    const next = prev + PROGRESS_INCREMENT;
+                    if (next >= 100) {
+                        if (intervalRef.current) {
+                            clearInterval(intervalRef.current);
+                            intervalRef.current = null;
+                        }
+                        timeoutRef.current = setTimeout(() => {
+                            onComplete?.(base64Data);
+                            timeoutRef.current = null;
+                        }, REDIRECT_DELAY_MS);
+                        return 100;
+                    }
+                    return next;
+                });
+            }, PROGRESS_INTERVAL_MS);
+        };
+        reader.readAsDataURL(file);
+    }, [isSignedIn, onComplete]);
 
-    // const handleDragOver = (e: React.DragEvent) => {
-    //     e.preventDefault();
-    //     if (!isSignedIn) return;
-    //     setIsDragging(true);
-    // };
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+        if (!isSignedIn) return;
+        setIsDragging(true);
+    };
 
-    // const handleDragLeave = () => {
-    //     setIsDragging(false);
-    // };
+    const handleDragLeave = () => {
+        setIsDragging(false);
+    };
 
-    // const handleDrop = (e: React.DragEvent) => {
-    //     e.preventDefault();
-    //     setIsDragging(false);
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
 
-    //     if (!isSignedIn) return;
+        if (!isSignedIn) return;
 
-    //     const droppedFile = e.dataTransfer.files[0];
-    //     const allowedTypes = ['image/jpeg', 'image/png'];
-    //     if (droppedFile && allowedTypes.includes(droppedFile.type)) {
-    //         processFile(droppedFile);
-    //     }
-    // };
+        const droppedFile = e.dataTransfer.files[0];
+        const allowedTypes = ['image/jpeg', 'image/png'];
+        if (droppedFile && allowedTypes.includes(droppedFile.type)) {
+            processFile(droppedFile);
+        }
+    };
 
-    // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     if (!isSignedIn) return;
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!isSignedIn) return;
 
-    //     const selectedFile = e.target.files?.[0];
-    //     if (selectedFile) {
-    //         processFile(selectedFile);
-    //     }
-    // };
+        const selectedFile = e.target.files?.[0];
+        if (selectedFile) {
+            processFile(selectedFile);
+        }
+    };
 
     return (
         <div className="upload">
-            {/* {!file ? (
+            {!file ? (
                 <div
                     className={`dropzone ${isDragging ? 'is-dragging' : ''}`}
                     onDragOver={handleDragOver}
@@ -147,7 +147,7 @@ const Upload = ({ onComplete }: UploadProps) => {
                         </div>
                     </div>
                 </div>
-            )} */}
+            )}
         </div>
     )
 }

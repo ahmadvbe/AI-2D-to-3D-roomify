@@ -5,7 +5,12 @@ import Button from "../../components/ui/Button";
 import Upload from "../../components/Upload";
 import {useNavigate} from "react-router";
 import {useEffect, useRef, useState} from "react";
-// import {createProject, getProjects} from "../../lib/puter.action";
+
+//and we will call this function createProject in our app/routes/home.tsx
+import {createProject, 
+    getProjects
+} 
+    from "../../lib/puter.action";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -16,55 +21,76 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() { 
     const navigate = useNavigate();
-    // const [projects, setProjects] = useState<DesignItem[]>([]);
-    const isCreatingProjectRef = useRef(false);
+
+    //test of the create Project func created at lib/puter.action.ts 1:33:00
+    const [projects, setProjects] = useState<DesignItem[]>([]);
+
+    //2:26:05
+     const isCreatingProjectRef = useRef(false);
 
     const handleUploadComplete = async (base64Image: string) => {
-        // try {
+         try {
 
-        //     if(isCreatingProjectRef.current) return false;
-        //     isCreatingProjectRef.current = true;
-        //     const newId = Date.now().toString();
-        //     const name = `Residence ${newId}`;
+             if(isCreatingProjectRef.current) return false; //2:26:26 BCZ WE RE CURRENLTY CREATING THE PROJECT
+             isCreatingProjectRef.current = true;//ELSE WE RE GONNA SIMPLY SET IT TO TRUE SO WE CAN CONTINUE WITH UPLOAD
 
-        //     const newItem = {
-        //         id: newId, name, sourceImage: base64Image,
-        //         renderedImage: undefined,
-        //         timestamp: Date.now()
-        //     }
+        console.log("app/routes/home.tsx, handling is upload")
+             const newId = Date.now().toString();
+             const name = `Residence ${newId}`; //1:33:40
 
-        //     const saved = await createProject({ item: newItem, visibility: 'private' });
+            const newItem = { //1:34:00 those are start values
+                id: newId,
+                name,
+                sourceImage: base64Image,
+                renderedImage: undefined,
+                timestamp: Date.now()
+            }
 
-        //     if(!saved) {
-        //         console.error("Failed to create project");
-        //         return false;
-        //     }
+            console.log("app/routes/home.tsx,handling is upload, New item is created")
+            console.log("app/routes/home.tsx, Moving forward to craete the project using the create project func")
+            //1:34:25 call the create project func
+            const saved = await createProject({ 
+                    item: newItem, 
+                    visibility: 'private' });
 
-        //     setProjects((prev) => [saved, ...prev]);
+            if(!saved) {//1:34:40 if it doesnt exist
+                console.error("app/routes/home.tsx,Failed to create project");
+                return false;
+            }
+                    //if success 1:35:00. 1:43:00 code rabbit fix here
+                    //setProjects((prev) => [newItem, ...prev])
+            console.log("app/routes/home.tsx,Project has been created,saved.sourceImage", saved.sourceImage)
+            console.log("app/routes/home.tsx,Project has been created,saved.renderedImage", saved.renderedImage)
+            setProjects((prev) => [saved, ...prev]); //prepend the new item instead of appending it
+            //so it comes on top 
+            console.log("app/routes/home.tsx/Projects", projects)
+            console.log("app/routes/home.tsx/saved Project", saved)
 
-        //     navigate(`/visualizer/${newId}`, {
-        //         state: {
-        //             initialImage: saved.sourceImage,
-        //             initialRendered: saved.renderedImage || null,
-        //             name
-        //         }
-        //     }
-        // );
-
-        //     return true;
-        // } finally {
-        //     isCreatingProjectRef.current = false;
-        // }
+            navigate(`/visualizer/${newId}`,
+             { //1:35:20 provide some additonal state
+                state: { //pass our initial image 
+                    initialImage: saved.sourceImage, //before
+                    initialRendered: saved.renderedImage || null, //after
+                    name
+                }
+            });
+            
+            return true;
+        } finally { //2:26:50
+            isCreatingProjectRef.current = false; //SET IT BACK TO FALSE
+        }
     }
 
-    useEffect(() => {
+    // ##                    2:36:55 TEST missing data/projects not being displayed
+    //             2:40:40 our projects arent being updated 
+    useEffect(() => { 
         const fetchProjects = async () => {
-            // const items = await getProjects();
+             const items = await getProjects(); //2:40:50
 
-            // setProjects(items)
+             setProjects(items)
         }
 
-        fetchProjects();
+        fetchProjects(); //call the func created prev 2:41:15
     }, []);
 
   return (
@@ -135,10 +161,14 @@ export default function Home() {
 
                   <div //42:10
                     className="projects-grid">
-                      {/* {projects.map(({id, name, renderedImage, sourceImage, timestamp}) => (
-                          <div      key={id} 
+                            {/* //1:36:00 */}
+                      {projects.map(({id, name, renderedImage, sourceImage, timestamp}) => (
+                        //automatic return this project card group 
+                        // - return multiple cards nt only one
+                          <div      key={id}  //1:44:00 code rabbit fix
                                     className="project-card group" 
-                                    onClick={() => navigate(`/visualizer/${id}`)}>
+                                    onClick={() => navigate(`/visualizer/${id}`)} //2:42:05 once u clikc on one of the projects
+                                    >
                               <div      className="preview">
                                   <img  
                                     src={renderedImage || sourceImage} alt="Project"
@@ -152,7 +182,8 @@ export default function Home() {
 
                               <div  //43:26
                                 className="card-body">
-                                  <div>
+                                  <div //render the real name 1:37:10
+                                    >
                                       <h3>{name}</h3>
 
                                       <div className="meta">
@@ -161,13 +192,13 @@ export default function Home() {
                                           <span>By WEBE </span>
                                       </div>
                                   </div>
-                                  <div. //44:25 
+                                  <div //44:25 
                                     className="arrow">
                                       <ArrowUpRight size={18} />
                                   </div>
                               </div>
                           </div>
-                      ))} */}
+                      ))}
                   </div>
               </div>
           </section>
