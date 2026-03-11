@@ -25,12 +25,13 @@ export const createProject = async ({  //1:27:15 object cntaining
             visibility = "private" }
      : CreateProjectParams):
       Promise<DesignItem | null | undefined> => { //return a promise which get resolved into
-    if(!PUTER_WORKER_URL) {
-        console.warn('Missing VITE_PUTER_WORKER_URL; skip history fetch;');
-        return null;
-    }
+    // if(!PUTER_WORKER_URL) {
+    //     console.warn('Missing VITE_PUTER_WORKER_URL; skip history fetch;');
+    //     return null;
+    // }
     const projectId = item.id; //1:27:58
-
+         console.log("lib/puter.action.ts, iTem", item)
+         console.log("lib/puter.action.ts, Project ID", projectId)
     const hosting = await getOrCreateHostingConfig(); //get access ot the hosting -- lib/puter.hosting.ts
 
 
@@ -44,16 +45,20 @@ export const createProject = async ({  //1:27:15 object cntaining
             projectId,
             label: 'source', }) :
                                  null; //or if we dnt hve the projectId there is ntg to host
-
+            //console.log("lib/puter.action.ts, item.sourceImage", item.sourceImage)
+            console.log("lib/puter.action.ts, BeforeImage=hostedSource", hostedSource)
                                     //1:28:44
+            
     const hostedRender = projectId && item.renderedImage ?
         await uploadImageToHosting({ 
             hosting,
-            url: item.renderedImage, //nt the source image rather the renderdone
+            url: item.renderedImage, //nt the source image rather the renderd image
             projectId,
              label: 'rendered', }) : 
                                     null;
             //WE NEED TO HVE THE BEFORE AND AFTER IMAGES 1:29:20
+            console.log("lib/puter.action.ts, item.renderedImage", item.renderedImage)
+            console.log("lib/puter.action.ts, RenderedImage=hostedRender", hostedRender)
 
             //NOW WE NEED TO RESOLVE IT 1:29:40
     const resolvedSource = hostedSource?.url || 
@@ -66,6 +71,7 @@ export const createProject = async ({  //1:27:15 object cntaining
         console.warn('Failed to host source image, skipping save.')
         return null;
     }
+    console.log("lib/puter.action.ts, resolvedSource", resolvedSource)
 
     //1:30:25 GET ACCESS TO THE RESOLVED RENDER
     const resolvedRender = hostedRender?.url
@@ -73,7 +79,7 @@ export const createProject = async ({  //1:27:15 object cntaining
         : item.renderedImage && isHostedUrl(item.renderedImage)
             ? item.renderedImage
             : undefined;
-
+    console.log("lib/puter.action.ts, resolvedRender", resolvedRender)
 
             //1:31:18 FORM A NEW OBJECT THAT HAS TO LOOK LIKE THE DESIGN ITEM 
             //CONTAINING ALL OF TIS PROPERTIES 1:31:30
@@ -122,59 +128,59 @@ export const createProject = async ({  //1:27:15 object cntaining
     }
 }
 
-export const getProjects = async () => {
-    if(!PUTER_WORKER_URL) {
-        console.warn('Missing VITE_PUTER_WORKER_URL; skip history fetch;');
-        return []
-    }
+// export const getProjects = async () => {
+//     if(!PUTER_WORKER_URL) {
+//         console.warn('Missing VITE_PUTER_WORKER_URL; skip history fetch;');
+//         return []
+//     }
 
-    try {
-        const response = await puter.workers.exec(`${PUTER_WORKER_URL}/api/projects/list`, { method: 'GET' });
+//     try {
+//         const response = await puter.workers.exec(`${PUTER_WORKER_URL}/api/projects/list`, { method: 'GET' });
 
-        if(!response.ok) {
-            console.error('Failed to fetch history', await response.text());
-            return [];
-        }
+//         if(!response.ok) {
+//             console.error('Failed to fetch history', await response.text());
+//             return [];
+//         }
 
-        const data = (await response.json()) as { projects?: DesignItem[] | null };
+//         const data = (await response.json()) as { projects?: DesignItem[] | null };
 
-        return Array.isArray(data?.projects) ? data?.projects : [];
-    } catch (e) {
-        console.error('Failed to get projects', e);
-        return [];
-    }
-}
+//         return Array.isArray(data?.projects) ? data?.projects : [];
+//     } catch (e) {
+//         console.error('Failed to get projects', e);
+//         return [];
+//     }
+// }
 
-export const getProjectById = async ({ id }: { id: string }) => {
-    if (!PUTER_WORKER_URL) {
-        console.warn("Missing VITE_PUTER_WORKER_URL; skipping project fetch.");
-        return null;
-    }
+// export const getProjectById = async ({ id }: { id: string }) => {
+//     // if (!PUTER_WORKER_URL) {
+//     //     console.warn("Missing VITE_PUTER_WORKER_URL; skipping project fetch.");
+//     //     return null;
+//     // }
 
-    console.log("Fetching project with ID:", id);
+//     console.log("Fetching project with ID:", id);
 
-    try {
-        const response = await puter.workers.exec(
-            `${PUTER_WORKER_URL}/api/projects/get?id=${encodeURIComponent(id)}`,
-            { method: "GET" },
-        );
+//     try {
+//         const response = await puter.workers.exec(
+//             `${PUTER_WORKER_URL}/api/projects/get?id=${encodeURIComponent(id)}`,
+//             { method: "GET" },
+//         );
 
-        console.log("Fetch project response:", response);
+//         console.log("Fetch project response:", response);
 
-        if (!response.ok) {
-            console.error("Failed to fetch project:", await response.text());
-            return null;
-        }
+//         if (!response.ok) {
+//             console.error("Failed to fetch project:", await response.text());
+//             return null;
+//         }
 
-        const data = (await response.json()) as {
-            project?: DesignItem | null;
-        };
+//         const data = (await response.json()) as {
+//             project?: DesignItem | null;
+//         };
 
-        console.log("Fetched project data:", data);
+//         console.log("Fetched project data:", data);
 
-        return data?.project ?? null;
-    } catch (error) {
-        console.error("Failed to fetch project:", error);
-        return null;
-    }
-};
+//         return data?.project ?? null;
+//     } catch (error) {
+//         console.error("Failed to fetch project:", error);
+//         return null;
+//     }
+// };

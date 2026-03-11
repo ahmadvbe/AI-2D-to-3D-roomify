@@ -36,6 +36,8 @@ export const getOrCreateHostingConfig = async (): Promise<HostingConfig | null> 
         const record = { subdomain: created.subdomain };//get access to the record
         // --set the record to created.subdomain
 
+        //save the new subdomain to the DB , 1:45:30 code rabbit fix
+        //add this record to the hosting config
         await puter.kv.set(HOSTING_CONFIG_KEY, record);
 
             return record;

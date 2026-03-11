@@ -7,7 +7,10 @@ import {useNavigate} from "react-router";
 import {useEffect, useRef, useState} from "react";
 
 //and we will call this function createProject in our app/routes/home.tsx
-import {createProject, getProjects} from "../../lib/puter.action";
+import {createProject, 
+    //getProjects
+} 
+    from "../../lib/puter.action";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -28,37 +31,47 @@ export default function Home() {
 
         //     if(isCreatingProjectRef.current) return false;
         //     isCreatingProjectRef.current = true;
+        console.log("app/routes/home.tsx, handling is upload")
              const newId = Date.now().toString();
              const name = `Residence ${newId}`; //1:33:40
 
-            const newItem = { //1:34:00
-                id: newId, name, sourceImage: base64Image,
+            const newItem = { //1:34:00 those are start values
+                id: newId,
+                name,
+                sourceImage: base64Image,
                 renderedImage: undefined,
                 timestamp: Date.now()
             }
 
-            //1:34:25 call the craete project func
+            console.log("app/routes/home.tsx,handling is upload, New item is created")
+            console.log("app/routes/home.tsx, Moving forward to craete the project using the create project func")
+            //1:34:25 call the create project func
             const saved = await createProject({ 
                     item: newItem, 
                     visibility: 'private' });
 
             if(!saved) {//1:34:40 if it doesnt exist
-                console.error("Failed to create project");
+                console.error("app/routes/home.tsx,Failed to create project");
                 return false;
             }
-                    //if success 1:35:00
+                    //if success 1:35:00. 1:43:00 code rabbit fix here
+                    //setProjects((prev) => [newItem, ...prev])
+            console.log("app/routes/home.tsx,Project has been created,saved.sourceImage", saved.sourceImage)
+            console.log("app/routes/home.tsx,Project has been created,saved.renderedImage", saved.renderedImage)
             setProjects((prev) => [saved, ...prev]); //prepend the new item instead of appending it
             //so it comes on top 
+            console.log("app/routes/home.tsx/Projects", projects)
+            console.log("app/routes/home.tsx/saved Project", saved)
 
-            navigate(`/visualizer/${newId}`),
+            navigate(`/visualizer/${newId}`,
              { //1:35:20 provide some additonal state
                 state: { //pass our initial image 
                     initialImage: saved.sourceImage, //before
                     initialRendered: saved.renderedImage || null, //after
                     name
                 }
-            };
-
+            });
+            
             return true;
         // } finally {
         //     isCreatingProjectRef.current = false;
@@ -147,7 +160,7 @@ export default function Home() {
                       {projects.map(({id, name, renderedImage, sourceImage, timestamp}) => (
                         //automatic return this project card group 
                         // - return multiple cards nt only one
-                          <div      key={id} 
+                          <div      key={id}  //1:44:00 code rabbit fix
                                     className="project-card group" 
                                     onClick={() => navigate(`/visualizer/${id}`)}>
                               <div      className="preview">

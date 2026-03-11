@@ -132,5 +132,34 @@ https://vite.dev/
     test is done here 1:32:56 test it out and check whether we can get this payload out and we will call this function createProject in our app/routes/home.tsx
 
 ##    1:38:00 app/routes/visualizer.$id.tsx
+##  1:41:00 git status
+            git add .
+            git commit -m 'host and upload images'
+            git push
+        1:41:16 code rabbit
+            **Diagram 1:41:35 **
 
+## 1:48:10 genrate 3D Design
+        lib/ai.action.ts 1:48:30
+            https://docs.puter.com/AI/txt2img/
+            -Since we hve already hosted our Image we need to convert it to Base 64 before      sending it into the AI model
+                1-create a func fetchAsDataUrl 1:49:!4 taking the URL and turn it into Base 64 string 1:49:10 @ lib/ai.action.ts
+                2-then create a function "generate3DView" using the file extracted above  
+                3-1:55:35 now we call this generate3DView within our Visualizer 
+                    app/routes/visualizer.$id.tsx to be able to display the generated result
+                    we implmenet it within runGeneration func
 
+    1:59:50 Start Displayin the visulaizer
+        2:06:50 test
+        2:08:20 throughout this process we hve never craeted api keys on Gemini, Open AI or ny kind of DB or Authentication Solution
+        in this case is acting as our full on backend replacinf our auth provider,
+        the DB with their key Value storage, the AI providers and asll sorts of diff APIs
+        all within ont tool that u didnt hve to enter the credit card for not ponly for you 
+        2:08:50 now if you rc on the image u notice that it is a blob and not an actual deployed URL
+            its a **DATA BLOB**
+                data:text/xml;base64,iVBORw0KG....... (INCLUDES BASE 64 IMAGE)
+ 
+ ##               IF YOU REFRESH THE PAGE ITS GONE IT WILL BE RECREATED AGAIN 2:09:08
+                WE HAVE TO HOST THIS AI generated Image on the puter Site Submdomain 
+ ##               and save thie project info into the key value DB too
+             2:09:35 git save   
