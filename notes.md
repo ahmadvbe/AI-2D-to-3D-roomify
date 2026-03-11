@@ -243,3 +243,19 @@ https://vite.dev/
                 2:41:46 reload the home page and u will see the newly created residence
 
 ## 2:42:40 commit chanGES
+##              CODE RABIT REVIEW/BRIEF DESCRIPTION   2:43:15 2:43:45 FLOW
+                2:44:40 modification by junie regarding the .env.local:
+                    1-remove it from the gitcache
+                    2- be added to .gitignore
+                2:46:40 add the userId to the key
+
+## 2:47:25 Implement he Visualizer component allowing to see on left on right the comparison
+    basic plan vs final version
+        react-compare-silder    
+            app/routes/visualizer.$id.tsx / jsx part
+
+    2:53:39 Export button functionality with Junie @ app/routes/visualizer.$id.tsx
+
+2:54:40 Changes commit
+    explanation of git hub branches/pull requests  2:55:20
+##              CODE RABIT REVIEW/BRIEF DESCRIPTION   2:55:40

@@ -6,6 +6,7 @@ import Button from "../../components/ui/Button";
 import {createProject, 
         getProjectById
     } from "../../lib/puter.action";
+import { ReactCompareSlider, ReactCompareSliderImage } from "react-compare-slider";
 // import {ReactCompareSlider, ReactCompareSliderImage} from "react-compare-slider";
 
             // 59:28 VISUALIZE THE UPLOADED FILE
@@ -37,7 +38,7 @@ const VisualizerId = () => {
 
     const handleBack = () => navigate('/'); //1:57:00 nav back to home
 
-    const handleExport = () => {
+    const handleExport = () => { //2:53:39 Export button functionality with Junie
         if (!currentImage) return;
 
         const link = document.createElement('a');
@@ -247,34 +248,44 @@ const VisualizerId = () => {
 
                 </div>
 
-                <div className="panel compare">
+                <div //2:48:20 ## 2:47:25 Implement he Visualizer component allowing to see on left on right the comparison
+                     className="panel compare">
                     <div className="panel-header">
                         <div className="panel-meta">
                             <p>Comparison</p>
                             <h3>Before and After</h3>
                         </div>
-                        <div className="hint">Drag to compare</div>
+                        <div //2:48:52
+                            className="hint">Drag to compare</div>
                     </div>
 
-                    <div className="compare-stage">
-                        {/* {project?.sourceImage && currentImage ? (
+                    <div  
+                        className="compare-stage">
+                        {project?.sourceImage  //2:49:18
+                            && currentImage ? ( //only if we hve both then we wana render the following
                             <ReactCompareSlider
-                                defaultValue={50}
+                                defaultValue={50} //2:50:25 50% of the old and new images to be displayed
                                 style={{ width: '100%', height: 'auto' }}
-                                itemOne={
-                                    <ReactCompareSliderImage src={project?.sourceImage} alt="before" className="compare-img" />
+                                itemOne={ //choose bhow the item 1 is gonna look like 2:50:45
+                                    <ReactCompareSliderImage 
+                                            src={project?.sourceImage} 
+                                            alt="before" 
+                                            className="compare-img" />
                                 }
                                 itemTwo={
-                                    <ReactCompareSliderImage src={currentImage || project?.renderedImage} alt="after" className="compare-img" />
+                                    <ReactCompareSliderImage 
+                                        src={currentImage || project?.renderedImage} 
+                                        alt="after" 
+                                        className="compare-img" />
                                 }
                             />
-                        ) : (
+                        ) : ( //if we dnt hve access to prev and current image return a fallback 2:49:45
                             <div className="compare-fallback">
                                 {project?.sourceImage && (
                                     <img src={project.sourceImage} alt="Before" className="compare-img" />
                                 )}
                             </div>
-                        )} */}
+                        )}
                     </div>
                 </div>
             </section>
